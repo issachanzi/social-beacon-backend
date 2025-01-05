@@ -2,10 +2,8 @@ package net.issachanzi.beacon.model;
 
 import de.mkammerer.argon2.Argon2;
 import de.mkammerer.argon2.Argon2Factory;
-import net.issachanzi.resteasy.controller.exception.Forbidden;
-import net.issachanzi.resteasy.controller.exception.HttpErrorStatus;
-import net.issachanzi.resteasy.controller.exception.InternalServerError;
-import net.issachanzi.resteasy.controller.exception.NotFound;
+import net.issachanzi.resteasy.controller.exception.*;
+import net.issachanzi.resteasy.model.AccessType;
 import net.issachanzi.resteasy.model.EasyModel;
 import net.issachanzi.resteasy.model.annotation.CustomMethod;
 
@@ -67,5 +65,36 @@ public class User extends EasyModel {
                 this.password,
                 password.getBytes(StandardCharsets.UTF_8)
         );
+    }
+
+    @Override
+    public boolean authorize (
+        Connection db,
+        String authorization,
+        AccessType accessType
+    ) throws HttpErrorStatus {
+        if (accessType == AccessType.CREATE) {
+            try {
+                User conflicting = User.byUsername(db, this.username);
+
+                if (conflicting == null) {
+                    return true;
+                }
+                else {
+                    throw new Conflict(
+                        "User with that username already exists"
+                    );
+                }
+            }
+            catch (NotFound ex) {
+                return true;
+            }
+        }
+        else if (accessType == AccessType.READ) {
+            return true;
+        }
+        else {
+            return this.equals (Login.byToken(db, authorization).user());
+        }
     }
 }
