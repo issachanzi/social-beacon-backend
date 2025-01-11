@@ -28,8 +28,6 @@ public class Beacon extends EasyModel {
     protected void init (Connection db, JsonObject jsonObject)
             throws SQLException, HttpErrorStatus {
         super.init(db, jsonObject);
-
-        this.timestamp = new Timestamp(System.currentTimeMillis());
     }
 
     @Override
@@ -85,10 +83,22 @@ public class Beacon extends EasyModel {
             relativeTime = "now";
         }
         else if (timeDiffMillis < 60 * 60_000) {
-            relativeTime = "in " + timeDiffMillis / 60_000 + " minutes";
+            int minutes = (int) timeDiffMillis / 60_000;
+            if (minutes == 1) {
+                relativeTime = "in " + minutes + "minute";
+            }
+            else {
+                relativeTime = "in " + minutes + " minutes";
+            }
         }
         else {
-            relativeTime = "in " + timeDiffMillis / 60 / 60_000 + " hours";
+            int hours = (int) timeDiffMillis / 60 / 60_000;
+            if (hours == 1) {
+               relativeTime = "in " + hours + " hour";
+            }
+            else {
+                relativeTime = "in " + hours + " hours";
+            }
         }
 
         LocalDateTime date = LocalDateTime.ofEpochSecond(time.getTime() / 1000, 0, TIME_ZONE_OFFSET);
