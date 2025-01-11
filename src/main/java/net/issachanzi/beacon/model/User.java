@@ -21,6 +21,8 @@ public class User extends EasyModel {
     public String displayName;
     private String password;
     private Collection<User> friends = new HashSet<>();
+    private Collection<NotificationSubscribe> notificationDevices
+        = new HashSet<>();
 
     public void password (String password) {
         Argon2 argon2 = Argon2Factory.create();
@@ -96,5 +98,9 @@ public class User extends EasyModel {
         else {
             return this.equals (Login.byToken(db, authorization).user());
         }
+    }
+
+    Collection<NotificationSubscribe> notificationDevices () {
+        return this.notificationDevices;
     }
 }
