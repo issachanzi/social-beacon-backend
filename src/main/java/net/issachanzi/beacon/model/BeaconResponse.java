@@ -7,7 +7,7 @@ import net.issachanzi.resteasy.model.EasyModel;
 import java.sql.Connection;
 import java.util.Optional;
 
-public class BeaconResponse extends EasyModel {
+public class BeaconResponse extends EasyModel implements GarbageCollectable {
     public Beacon beacon;
     public User user;
 
@@ -41,5 +41,10 @@ public class BeaconResponse extends EasyModel {
         else {
             return false;
         }
+    }
+
+    @Override
+    public boolean isGarbage() {
+        return this.beacon == null;
     }
 }
