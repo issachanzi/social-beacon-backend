@@ -1,10 +1,12 @@
 package net.issachanzi.beacon.model;
 
+import com.google.firebase.messaging.FirebaseMessagingException;
 import net.issachanzi.resteasy.controller.exception.HttpErrorStatus;
 import net.issachanzi.resteasy.model.AccessType;
 import net.issachanzi.resteasy.model.EasyModel;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Optional;
 
 public class BeaconResponse extends EasyModel implements GarbageCollectable {
@@ -40,6 +42,27 @@ public class BeaconResponse extends EasyModel implements GarbageCollectable {
         }
         else {
             return false;
+        }
+    }
+
+    @Override
+    public void save (Connection db) throws SQLException {
+        super.save (db);
+
+        notifyUser ();
+    }
+
+    private void notifyUser() {
+        for (var device : this.beacon.sender.notificationDevices()) {
+            String title = this.user.displayName + " \u2764\ufe0f your beacon!";
+
+            String body = "Text them now to meet up";
+
+            try {
+                device.sendNotification (title, body);
+            } catch (FirebaseMessagingException ex) {
+                ex.printStackTrace();
+            }
         }
     }
 
