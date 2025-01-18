@@ -1,6 +1,7 @@
 package net.issachanzi.beacon;
 
 import net.issachanzi.beacon.model.Beacon;
+import net.issachanzi.beacon.model.BeaconResponse;
 import net.issachanzi.beacon.model.GarbageCollectable;
 import net.issachanzi.resteasy.model.EasyModel;
 
@@ -40,11 +41,17 @@ public class GarbageCollection implements Runnable {
     }
 
     void collectGarbage () throws SQLException {
-        Collection <Beacon> beacons = EasyModel.all (db, Beacon.class);
+        collectGarbage (Beacon.class);
+        collectGarbage (BeaconResponse.class);
+    }
 
-        for (Beacon beacon : beacons) {
-            if (beacon.isGarbage ()) {
-                beacon.delete (db);
+    private <M extends EasyModel & GarbageCollectable> void collectGarbage (
+            Class <M> clazz
+    ) throws SQLException {
+        Collection <M> models = EasyModel.all (this.db, clazz);
+        for (M model : models) {
+            if (model.isGarbage ()) {
+                model.delete (db);
             }
         }
     }
