@@ -14,7 +14,7 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.TimeZone;
 
-public class Beacon extends EasyModel {
+public class Beacon extends EasyModel implements GarbageCollectable {
     public static final ZoneOffset TIME_ZONE_OFFSET
         = ZoneOffset.ofTotalSeconds((
             TimeZone.getTimeZone("Australia/Melbourne")
@@ -111,5 +111,14 @@ public class Beacon extends EasyModel {
         else {
             return relativeTime + ", at " + absoluteTime;
         }
+    }
+
+    @Override
+    public boolean isGarbage() {
+        final long garbageThreshold = - 60 * 60 * 1000; // One hour in the past
+        final long relativeTime
+                = this.timestamp.getTime() - System.currentTimeMillis();
+
+        return relativeTime < garbageThreshold;
     }
 }

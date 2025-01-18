@@ -4,6 +4,7 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.messaging.FirebaseMessagingException;
+import net.issachanzi.beacon.model.GarbageCollectable;
 import net.issachanzi.beacon.model.NotificationSubscribe;
 import net.issachanzi.resteasy.RestEasy;
 
@@ -22,6 +23,9 @@ public class Main {
             var app = new RestEasy();
 
             app.init (db);
+
+            var garbageCollection = new GarbageCollection (db);
+            garbageCollection.start();
 
             //testNotification();
         } catch (Exception e) {
