@@ -54,7 +54,7 @@ public class User extends EasyModel {
                     .findAny()
                     .orElseThrow();
         } catch (NoSuchElementException ex) {
-            throw new NotFound(ex);
+            return null;
         } catch (SQLException ex) {
             throw new InternalServerError(ex);
         }

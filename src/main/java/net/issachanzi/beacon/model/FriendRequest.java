@@ -1,5 +1,6 @@
 package net.issachanzi.beacon.model;
 
+import com.google.firebase.messaging.FirebaseMessagingException;
 import net.issachanzi.resteasy.controller.exception.HttpErrorStatus;
 import net.issachanzi.resteasy.controller.exception.InternalServerError;
 import net.issachanzi.resteasy.model.AccessType;
@@ -46,6 +47,27 @@ public class FriendRequest extends EasyModel {
         }
         else {
             return false;
+        }
+    }
+
+    @Override
+    public void save (Connection db) throws SQLException {
+        super.save (db);
+
+        notifyUser();
+    }
+
+    private void notifyUser() {
+        for (var device : this.to.notificationDevices()) {
+            String title = this.from.displayName + " sent you a friend request!";
+
+            String body = "Accept the friend request?";
+
+            try {
+                device.sendNotification (title, body);
+            } catch (FirebaseMessagingException ex) {
+                ex.printStackTrace();
+            }
         }
     }
 }
