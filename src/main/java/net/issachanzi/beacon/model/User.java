@@ -93,6 +93,10 @@ public class User extends EasyModel {
             }
         }
         else if (accessType == AccessType.READ) {
+            if (!this.equals (Login.byToken(db, authorization).user())) {
+                this.friends = null;
+            }
+
             return true;
         }
         else {
