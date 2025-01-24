@@ -13,18 +13,15 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 
 public class Main {
-    private static final String dbUrl  = "jdbc:postgresql://localhost:5432/app?user=postgres";
-
     public static void main(String[] args) {
         try {
             initFirebase();
 
-            Connection db = DriverManager.getConnection(dbUrl);
             var app = new RestEasy();
 
-            app.init (db);
+            app.init ();
 
-            var garbageCollection = new GarbageCollection (db);
+            var garbageCollection = new GarbageCollection (app.db);
             garbageCollection.start();
 
             //testNotification();
@@ -32,17 +29,6 @@ public class Main {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
-    }
-
-    private static void testNotification() throws FirebaseMessagingException {
-        var ns = new NotificationSubscribe();
-
-        ns.token = "d1dxBatPTk6zTPO7GGdYRL:APA91bEXk_jvvNKY5R6MnjRRy_G3mD-zbPbG8pdV6Ltclicok0rrWaAlWiz4_Y6GsT4-JoQl9IAXFqWMTKZHL36coVO_MwCByhnir8lWDYMkQYvJmQZpkkY";
-
-        ns.sendNotification (
-        "Test notification",
-        "Test notification sent from java backend"
-        );
     }
 
     public static void initFirebase () throws IOException {
