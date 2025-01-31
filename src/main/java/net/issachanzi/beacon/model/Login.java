@@ -42,7 +42,10 @@ public class Login extends EasyModel {
 
         this.user = User.byUsername(db, this.username);
 
-        if (!user.checkPassword(this.password)) {
+        if (this.user == null) {
+            throw new NotFound ("Bad username");
+        }
+        else if (!user.checkPassword(this.password)) {
             throw new Forbidden("Wrong password");
         }
     }
