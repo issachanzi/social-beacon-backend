@@ -2,10 +2,10 @@ package net.issachanzi.beacon.model;
 
 import de.mkammerer.argon2.Argon2;
 import de.mkammerer.argon2.Argon2Factory;
+import jakarta.json.JsonObject;
 import net.issachanzi.resteasy.controller.exception.*;
 import net.issachanzi.resteasy.model.AccessType;
 import net.issachanzi.resteasy.model.EasyModel;
-import net.issachanzi.resteasy.model.annotation.CustomMethod;
 
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
@@ -23,6 +23,24 @@ public class User extends EasyModel {
     private Collection<User> friends = new HashSet<>();
     private Collection<NotificationSubscribe> notificationDevices
         = new HashSet<>();
+
+    @Override
+    public void init (
+            Connection db,
+            JsonObject jsonObject
+    ) throws SQLException, HttpErrorStatus {
+        super.init (db, jsonObject);
+
+        if (this.username == null) {
+            throw new BadRequest("Username must not be null");
+        }
+        else if (this.password == null) {
+            throw new BadRequest("Password must not be null");
+        }
+        else if (this.displayName == null) {
+            throw new BadRequest("Display name must not be null");
+        }
+    }
 
     public void password (String password) {
         Argon2 argon2 = Argon2Factory.create();
