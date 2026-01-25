@@ -39,7 +39,7 @@ public class User extends EasyModel {
         }
         else if (this.displayName == null) {
             throw new BadRequest("Display name must not be null");
-        }
+        }   
     }
 
     public void password (String password) {

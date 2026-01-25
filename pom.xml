@@ -19,7 +19,7 @@
         <dependency>
             <groupId>net.issachanzi</groupId>
             <artifactId>rest-easy</artifactId>
-            <version>0.0.1</version>
+            <version>0.0.2</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/de.mkammerer/argon2-jvm -->
