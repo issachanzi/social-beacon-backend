@@ -54,20 +54,14 @@ public class FriendRequest extends EasyModel {
     public void save (Connection db) throws SQLException {
         super.save (db);
 
-        notifyUser();
+        notifyUser(db);
     }
 
-    private void notifyUser() {
-        for (var device : this.to.notificationDevices()) {
-            String title = this.from.displayName + " sent you a friend request!";
-
-            String body = "Accept the friend request?";
-
-            try {
-                device.sendNotification (title, body);
-            } catch (FirebaseMessagingException ex) {
-                ex.printStackTrace();
-            }
-        }
+    private void notifyUser(Connection db) {
+        String title = this.from.displayName + " sent you a friend request!";
+        
+        String body = "Accept the friend request?";
+        
+        this.to.sendNotification(db, title, body);
     }
 }
