@@ -49,21 +49,14 @@ public class BeaconResponse extends EasyModel implements GarbageCollectable {
     public void save (Connection db) throws SQLException {
         super.save (db);
 
-        notifyUser ();
+        notifyUser (db);
     }
 
-    private void notifyUser() {
-        for (var device : this.beacon.sender.notificationDevices()) {
-            String title = this.user.displayName + " \u2764\ufe0f your beacon!";
-
-            String body = "Text them now to meet up";
-
-            try {
-                device.sendNotification (title, body);
-            } catch (FirebaseMessagingException ex) {
-                ex.printStackTrace();
-            }
-        }
+    private void notifyUser(Connection db) {
+        String title = this.user.displayName + " \u2764\ufe0f your beacon!";
+        String body = "Text them now to meet up";
+        
+        this.beacon.sender.sendNotification(db, title, body);
     }
 
     @Override
