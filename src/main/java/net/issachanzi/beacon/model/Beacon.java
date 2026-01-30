@@ -53,25 +53,19 @@ public class Beacon extends EasyModel implements GarbageCollectable {
     public void save(Connection db) throws SQLException {
         super.save(db);
 
-        notifyFriends();
+        notifyFriends(db);
     }
 
-    private void notifyFriends() {
-        try {
-            for (var friend : this.sender.friends()) {
-                for (var device : friend.notificationDevices()) {
-                    String title = "Beacon from " + this.sender.displayName;
-
-                    String humanTime = formatTime(this.timestamp);
-                    String body = this.sender.displayName
-                                + " is free "
-                                + humanTime;
-
-                    device.sendNotification (title, body);
-                }
-            }
-        } catch (FirebaseMessagingException e) {
-            e.printStackTrace();
+    private void notifyFriends(Connection db) {
+        String title = "Beacon from " + this.sender.displayName;
+            
+        String humanTime = formatTime(this.timestamp);
+        String body = this.sender.displayName
+            + " is free "
+            + humanTime;
+        
+        for (var friend : this.sender.friends()) {
+            friend.sendNotification(db, title, body);
         }
     }
 
