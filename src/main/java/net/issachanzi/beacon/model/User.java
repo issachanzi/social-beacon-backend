@@ -1,5 +1,6 @@
 package net.issachanzi.beacon.model;
 
+import com.google.firebase.messaging.FirebaseMessagingException;
 import de.mkammerer.argon2.Argon2;
 import de.mkammerer.argon2.Argon2Factory;
 import jakarta.json.JsonObject;
@@ -124,5 +125,19 @@ public class User extends EasyModel {
 
     Collection<NotificationSubscribe> notificationDevices () {
         return this.notificationDevices;
+    }
+    
+    public void sendNotification (
+        Connection db,
+        String title,
+        String text
+    ) {
+        for (var device : notificationDevices) {
+            try {
+                device.sendNotification(db, title, text);
+            } catch (FirebaseMessagingException | SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
     }
 }

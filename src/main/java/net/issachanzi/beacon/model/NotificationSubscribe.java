@@ -1,9 +1,6 @@
 package net.issachanzi.beacon.model;
 
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.FirebaseMessagingException;
-import com.google.firebase.messaging.Message;
-import com.google.firebase.messaging.Notification;
+import com.google.firebase.messaging.*;
 import net.issachanzi.resteasy.controller.exception.HttpErrorStatus;
 import net.issachanzi.resteasy.model.AccessType;
 import net.issachanzi.resteasy.model.EasyModel;
@@ -60,9 +57,10 @@ public class NotificationSubscribe extends EasyModel {
     }
 
     public void sendNotification (
-            String title,
-            String text
-    ) throws FirebaseMessagingException {
+        Connection db,
+        String title,
+        String text
+    ) throws FirebaseMessagingException, SQLException {
         var notification = Notification.builder();
 
         notification.setTitle (title);
@@ -74,10 +72,19 @@ public class NotificationSubscribe extends EasyModel {
         message.setToken (this.token);
 
         var firebaseMessaging = FirebaseMessaging.getInstance();
-
-        firebaseMessaging.send(message.build());
-
-        System.out.println("Sent message " + message.build());
+        
+        try {
+            firebaseMessaging.send(message.build());
+            
+            System.out.println("Sent message " + message.build());
+        } catch (FirebaseMessagingException ex) {
+            if (ex.getMessagingErrorCode() == MessagingErrorCode.UNREGISTERED) {
+                this.delete(db);
+            }
+            else {
+                throw ex;
+            }
+        }
     }
 
 }
